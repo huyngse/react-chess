@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+$primary-color: #99BC85;
+$secondary-color: white;
+
+.black-tile {
+  animation: blackTileChangeColor 10s linear infinite;
+}
+
+@keyframes blackTileChangeColor {
+  0% {
+    background-color: #CDFADB;
+  }
+
+  25% {
+    background-color: #F6FDC3;
+  }
+
+  50% {
+    background-color: #FFCF96;
+  }
+  75% {
+    background-color: #FF8080;
+  }
+  100% {
+    background-color: #CDFADB;
+  }
+}

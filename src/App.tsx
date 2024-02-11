@@ -2,7 +2,7 @@ import Chessboard from "./components/Chessboard"
 
 function App() {
   return (
-    <div className="h-screen grid place-content-center bg-slate-800">
+    <div className="min-h-screen grid place-content-center bg-slate-800">
       <Chessboard/>
     </div>
   )
