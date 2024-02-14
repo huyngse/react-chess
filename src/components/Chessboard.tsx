@@ -207,13 +207,36 @@ const pieces: ChessPieceType[] = [
   },
 ];
 
+let grabbingPiece: HTMLDivElement | null = null;
+
+function handleDragPiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  const targetElement = e.target as HTMLDivElement;
+  if (targetElement.classList.contains("chess-piece")) {
+    const x = e.clientX - 30;
+    const y = e.clientY - 35;
+    targetElement.style.left = x + "px";
+    targetElement.style.top = y + "px";
+    grabbingPiece = targetElement;
+  }
+}
+function handleMovePiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  if (grabbingPiece) {
+    const x = e.clientX - 30;
+    const y = e.clientY - 35;
+    grabbingPiece.style.left = x + "px";
+    grabbingPiece.style.top = y + "px";
+  }
+}
+function handleDropPiece() {
+  grabbingPiece = null;
+}
 const Chessboard = () => {
   const board: ReactNode[] = [];
   for (let i = 0; i < verticalAxis.length; i++) {
     for (let j = 0; j < horizontalAxis.length; j++) {
       const color: "black" | "white" = (i + j) % 2 !== 0 ? "black" : "white";
       // key={`tile-${i}${j}`}
-      const piece = pieces.find(p => p.xPos === j && p.yPos === i)
+      const piece = pieces.find((p) => p.xPos === j && p.yPos === i);
       board.push(
         <Tile
           color={color}
@@ -225,7 +248,12 @@ const Chessboard = () => {
     }
   }
   return (
-    <div className="bg-[#99BC85] w-[500px] h-[500px] grid grid-cols-8">
+    <div
+      className="bg-[#99BC85] w-[500px] h-[500px] grid grid-cols-8"
+      onMouseDown={(e) => handleDragPiece(e)}
+      onMouseMove={(e) => handleMovePiece(e)}
+      onMouseUp={handleDropPiece}
+    >
       {board}
     </div>
   );

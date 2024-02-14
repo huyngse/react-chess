@@ -9,17 +9,18 @@ type TileProps = {
 function Tile({ color, coordination, chessPiece }: TileProps) {
   return (
     <span
-      className={`${
+      className={`tile ${
         color === "black" ? "black-tile" : "bg-white"
-      } text-gray-200 flex justify-center items-center font-bold text-xl select-none border hover:border-blue-950 hover:text-blue-950 duration-500 relative`}
+      } text-gray-200 flex justify-center items-center font-bold text-xl select-none border hover:border-blue-950 hover:text-blue-950 duration-500`}
     >
       {coordination}
       {chessPiece && (
-        <img
-          src={`/src/assets/images/${chessPiece.color}_${chessPiece.name}.png`}
-          alt="chess piece"
-          className="absolute cursor-pointer"
-        />
+        <div
+          className="chess-piece absolute cursor-grab w-[61px] h-[61px] bg-contain bg-no-repeat active:cursor-grabbing"
+          style={{
+            backgroundImage: `url(/src/assets/images/${chessPiece.color}_${chessPiece.name}.png)`,
+          }}
+        ></div>
       )}
     </span>
   );
