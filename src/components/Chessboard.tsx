@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useRef } from "react";
 import Tile from "./Tile";
 
 const verticalAxis: string[] = ["1", "2", "3", "4", "5", "6", "7", "8"];
@@ -207,30 +207,53 @@ const pieces: ChessPieceType[] = [
   },
 ];
 
-let grabbingPiece: HTMLDivElement | null = null;
-
-function handleDragPiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-  const targetElement = e.target as HTMLDivElement;
-  if (targetElement.classList.contains("chess-piece")) {
-    const x = e.clientX - 30;
-    const y = e.clientY - 35;
-    targetElement.style.left = x + "px";
-    targetElement.style.top = y + "px";
-    grabbingPiece = targetElement;
-  }
-}
-function handleMovePiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-  if (grabbingPiece) {
-    const x = e.clientX - 30;
-    const y = e.clientY - 35;
-    grabbingPiece.style.left = x + "px";
-    grabbingPiece.style.top = y + "px";
-  }
-}
-function handleDropPiece() {
-  grabbingPiece = null;
-}
 const Chessboard = () => {
+  const chessboardRef = useRef<HTMLDivElement>(null);
+
+  let grabbingPiece: HTMLDivElement | null = null;
+
+  function handleDragPiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    const targetElement = e.target as HTMLDivElement;
+    if (targetElement.classList.contains("chess-piece")) {
+      const x = e.clientX - 30;
+      const y = e.clientY - 35;
+      targetElement.style.left = x + "px";
+      targetElement.style.top = y + "px";
+      grabbingPiece = targetElement;
+    }
+  }
+
+  function handleMovePiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    const chessboard = chessboardRef.current;
+    if (grabbingPiece && chessboard) {
+      const minX = chessboard.offsetLeft;
+      const minY = chessboard.offsetTop;
+      const maxX = minX + chessboard.clientWidth - 60;
+      const maxY = minY + chessboard.clientHeight - 60;
+      const x = e.clientX - 30;
+      const y = e.clientY - 35;
+      if (x < minX) {
+        grabbingPiece.style.left = minX + "px";
+      } else if (x > maxX) {
+        grabbingPiece.style.left = maxX + "px";
+      } else {
+        grabbingPiece.style.left = x + "px";
+      }
+
+      if (y < minY) {
+        grabbingPiece.style.top = minY + "px";
+      } else if (y > maxY) {
+        grabbingPiece.style.top = maxY + "px";
+      } else {
+        grabbingPiece.style.top = y + "px";
+      }
+    }
+  }
+
+  function handleDropPiece() {
+    grabbingPiece = null;
+  }
+
   const board: ReactNode[] = [];
   for (let i = 0; i < verticalAxis.length; i++) {
     for (let j = 0; j < horizontalAxis.length; j++) {
@@ -250,6 +273,7 @@ const Chessboard = () => {
   return (
     <div
       className="bg-[#99BC85] w-[500px] h-[500px] grid grid-cols-8"
+      ref={chessboardRef}
       onMouseDown={(e) => handleDragPiece(e)}
       onMouseMove={(e) => handleMovePiece(e)}
       onMouseUp={handleDropPiece}
