@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from "react";
+import { ReactNode, useRef, useState } from "react";
 import Tile from "./Tile";
 
 const verticalAxis: string[] = ["1", "2", "3", "4", "5", "6", "7", "8"];
@@ -12,7 +12,7 @@ export type ChessPieceType = {
   xPos?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 };
 
-const pieces: ChessPieceType[] = [
+const initalPieces: ChessPieceType[] = [
   {
     name: "rook",
     color: "black",
@@ -206,17 +206,23 @@ const pieces: ChessPieceType[] = [
     xPos: 7,
   },
 ];
-
+// ##################################################################################
 const Chessboard = () => {
+  const [pieces, setPieces] = useState<ChessPieceType[]>(initalPieces);
   const chessboardRef = useRef<HTMLDivElement>(null);
 
+  let lastX = 0;
+  let lastY = 0;
   let grabbingPiece: HTMLDivElement | null = null;
 
   function handleDragPiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    const chessboard = chessboardRef.current;
     const targetElement = e.target as HTMLDivElement;
-    if (targetElement.classList.contains("chess-piece")) {
+    if (targetElement.classList.contains("chess-piece") && chessboard) {
       const x = e.clientX - 30;
       const y = e.clientY - 35;
+      lastX = Math.floor((e.clientX - chessboard.offsetLeft) / 62.5);
+      lastY = Math.floor((e.clientY - chessboard.offsetTop) / 62.5);
       targetElement.style.left = x + "px";
       targetElement.style.top = y + "px";
       grabbingPiece = targetElement;
@@ -250,8 +256,25 @@ const Chessboard = () => {
     }
   }
 
-  function handleDropPiece() {
-    grabbingPiece = null;
+  function handleDropPiece(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    const chessboard = chessboardRef.current;
+    if (grabbingPiece && chessboard) {
+      const x = Math.floor((e.clientX - chessboard.offsetLeft) / 62.5);
+      const y = Math.floor((e.clientY - chessboard.offsetTop) / 62.5);
+      setPieces((prev) => {
+        return prev.map((piece) => {
+          if (piece.xPos == lastX && piece.yPos == lastY) {
+            return {
+              ...piece,
+              xPos: x,
+              yPos: y,
+            } as ChessPieceType;
+          }
+          return piece;
+        });
+      });
+      grabbingPiece = null;
+    }
   }
 
   const board: ReactNode[] = [];
@@ -259,13 +282,13 @@ const Chessboard = () => {
     for (let j = 0; j < horizontalAxis.length; j++) {
       const color: "black" | "white" = (i + j) % 2 !== 0 ? "black" : "white";
       // key={`tile-${i}${j}`}
-      const piece = pieces.find((p) => p.xPos === j && p.yPos === i);
+      const matchingPieces = pieces.filter((p) => p.xPos === j && p.yPos === i);
       board.push(
         <Tile
           color={color}
           coordination={`${horizontalAxis[j]}${verticalAxis[i]}`}
           key={`tile-${i}${j}`}
-          chessPiece={piece}
+          chessPieces={matchingPieces}
         />
       );
     }
@@ -276,7 +299,7 @@ const Chessboard = () => {
       ref={chessboardRef}
       onMouseDown={(e) => handleDragPiece(e)}
       onMouseMove={(e) => handleMovePiece(e)}
-      onMouseUp={handleDropPiece}
+      onMouseUp={(e) => handleDropPiece(e)}
     >
       {board}
     </div>
