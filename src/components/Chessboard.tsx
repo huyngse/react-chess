@@ -1,23 +1,226 @@
 import { ReactNode } from "react";
+import Tile from "./Tile";
 
 const verticalAxis: string[] = ["1", "2", "3", "4", "5", "6", "7", "8"];
 verticalAxis.reverse();
 const horizontalAxis: string[] = ["a", "b", "c", "d", "e", "f", "g", "h"];
+
+export type ChessPieceType = {
+  name: "pawn" | "king" | "queen" | "knight" | "bishop" | "rook";
+  color: "black" | "white";
+  yPos?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  xPos?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+};
+
+const pieces: ChessPieceType[] = [
+  {
+    name: "rook",
+    color: "black",
+    yPos: 0,
+    xPos: 0,
+  },
+  {
+    name: "knight",
+    color: "black",
+    yPos: 0,
+    xPos: 1,
+  },
+  {
+    name: "bishop",
+    color: "black",
+    yPos: 0,
+    xPos: 2,
+  },
+  {
+    name: "queen",
+    color: "black",
+    yPos: 0,
+    xPos: 3,
+  },
+  {
+    name: "king",
+    color: "black",
+    yPos: 0,
+    xPos: 4,
+  },
+  {
+    name: "bishop",
+    color: "black",
+    yPos: 0,
+    xPos: 5,
+  },
+  {
+    name: "knight",
+    color: "black",
+    yPos: 0,
+    xPos: 6,
+  },
+  {
+    name: "rook",
+    color: "black",
+    yPos: 0,
+    xPos: 7,
+  },
+  {
+    name: "pawn",
+    color: "black",
+    yPos: 1,
+    xPos: 0,
+  },
+  {
+    name: "pawn",
+    color: "black",
+    yPos: 1,
+    xPos: 1,
+  },
+  {
+    name: "pawn",
+    color: "black",
+    yPos: 1,
+    xPos: 2,
+  },
+  {
+    name: "pawn",
+    color: "black",
+    yPos: 1,
+    xPos: 3,
+  },
+  {
+    name: "pawn",
+    color: "black",
+    yPos: 1,
+    xPos: 4,
+  },
+  {
+    name: "pawn",
+    color: "black",
+    yPos: 1,
+    xPos: 5,
+  },
+  {
+    name: "pawn",
+    color: "black",
+    yPos: 1,
+    xPos: 6,
+  },
+  {
+    name: "pawn",
+    color: "black",
+    yPos: 1,
+    xPos: 7,
+  },
+  {
+    name: "pawn",
+    color: "white",
+    yPos: 6,
+    xPos: 0,
+  },
+  {
+    name: "pawn",
+    color: "white",
+    yPos: 6,
+    xPos: 1,
+  },
+  {
+    name: "pawn",
+    color: "white",
+    yPos: 6,
+    xPos: 2,
+  },
+  {
+    name: "pawn",
+    color: "white",
+    yPos: 6,
+    xPos: 3,
+  },
+  {
+    name: "pawn",
+    color: "white",
+    yPos: 6,
+    xPos: 4,
+  },
+  {
+    name: "pawn",
+    color: "white",
+    yPos: 6,
+    xPos: 5,
+  },
+  {
+    name: "pawn",
+    color: "white",
+    yPos: 6,
+    xPos: 6,
+  },
+  {
+    name: "pawn",
+    color: "white",
+    yPos: 6,
+    xPos: 7,
+  },
+  {
+    name: "rook",
+    color: "white",
+    yPos: 7,
+    xPos: 0,
+  },
+  {
+    name: "knight",
+    color: "white",
+    yPos: 7,
+    xPos: 1,
+  },
+  {
+    name: "bishop",
+    color: "white",
+    yPos: 7,
+    xPos: 2,
+  },
+  {
+    name: "queen",
+    color: "white",
+    yPos: 7,
+    xPos: 3,
+  },
+  {
+    name: "king",
+    color: "white",
+    yPos: 7,
+    xPos: 4,
+  },
+  {
+    name: "bishop",
+    color: "white",
+    yPos: 7,
+    xPos: 5,
+  },
+  {
+    name: "knight",
+    color: "white",
+    yPos: 7,
+    xPos: 6,
+  },
+  {
+    name: "rook",
+    color: "white",
+    yPos: 7,
+    xPos: 7,
+  },
+];
+
 const Chessboard = () => {
   const board: ReactNode[] = [];
   for (let i = 0; i < verticalAxis.length; i++) {
     for (let j = 0; j < horizontalAxis.length; j++) {
-      const isBlack = (i + j) % 2 !== 0;
+      const color: "black" | "white" = (i + j) % 2 !== 0 ? "black" : "white";
+      // key={`tile-${i}${j}`}
+      const piece = pieces.find(p => p.xPos === j && p.yPos === i)
       board.push(
-        <span
+        <Tile
+          color={color}
+          coordination={`${horizontalAxis[j]}${verticalAxis[i]}`}
           key={`tile-${i}${j}`}
-          className={`${
-            isBlack ? "black-tile" : "bg-white"
-          } text-gray-200 flex justify-center items-center font-bold text-xl select-none border hover:border-blue-950 hover:text-blue-950 duration-500`}
-        >
-          {verticalAxis[i]}
-          {horizontalAxis[j]}
-        </span>
+          chessPiece={piece}
+        />
       );
     }
   }
